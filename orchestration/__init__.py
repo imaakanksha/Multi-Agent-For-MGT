@@ -2,6 +2,12 @@
 
 from .state import ResearchState, create_initial_state
 from .graph import build_research_graph
+from .correlation import (
+    generate_correlation_id,
+    WorkflowTracker,
+    WorkflowStatus,
+    StageStatus,
+)
 from .routing import (
     route_after_planning,
     route_after_gathering,
@@ -14,6 +20,10 @@ __all__ = [
     "ResearchState",
     "create_initial_state",
     "build_research_graph",
+    "generate_correlation_id",
+    "WorkflowTracker",
+    "WorkflowStatus",
+    "StageStatus",
     "route_after_planning",
     "route_after_gathering",
     "route_after_extraction",

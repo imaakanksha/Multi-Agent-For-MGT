@@ -44,6 +44,14 @@ class AzureSearchConfig:
 
 
 @dataclass
+class AzureStorageConfig:
+    """Configuration for Azure Table Storage & Queue Storage."""
+    connection_string: str = field(default_factory=lambda: os.getenv("AZURE_STORAGE_CONNECTION_STRING", ""))
+    table_name: str = field(default_factory=lambda: os.getenv("AZURE_TABLE_NAME", "workflowstate"))
+    dead_letter_queue: str = field(default_factory=lambda: os.getenv("AZURE_DEAD_LETTER_QUEUE", "research-dead-letter"))
+
+
+@dataclass
 class WorkflowConfig:
     """Configuration for workflow behavior."""
     max_retries: int = field(default_factory=lambda: int(os.getenv("MAX_RETRIES", "3")))
@@ -58,6 +66,7 @@ class AppConfig:
     search: SearchConfig = field(default_factory=SearchConfig)
     cosmos: AzureCosmosConfig = field(default_factory=AzureCosmosConfig)
     azure_search: AzureSearchConfig = field(default_factory=AzureSearchConfig)
+    azure_storage: AzureStorageConfig = field(default_factory=AzureStorageConfig)
     workflow: WorkflowConfig = field(default_factory=WorkflowConfig)
 
 
