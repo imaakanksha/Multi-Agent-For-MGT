@@ -153,24 +153,122 @@ class DeadLetterQueue:
         if self._backend == "sqlite" and self._sqlite_conn:
             try:
                 cursor = self._sqlite_conn.execute(
-                    """SELECT correlation_id, failed_stage, retry_count,
-                              error_log, created_at
+                    """SELECT id, correlation_id, failed_stage, retry_count,
+                              error_log, state_snapshot, created_at
                        FROM dead_letter ORDER BY created_at DESC LIMIT ?""",
                     (limit,),
                 )
                 return [
                     {
-                        "correlation_id": r[0],
-                        "failed_stage": r[1],
-                        "retry_count": r[2],
-                        "error_log": json.loads(r[3]) if r[3] else [],
-                        "created_at": r[4],
+                        "id": r[0],
+                        "correlation_id": r[1],
+                        "failed_stage": r[2],
+                        "retry_count": r[3],
+                        "error_log": json.loads(r[4]) if r[4] else [],
+                        "state_snapshot": json.loads(r[5]) if r[5] else None,
+                        "created_at": r[6],
                     }
                     for r in cursor.fetchall()
                 ]
             except Exception as e:
                 logger.error("Dead-letter list failed: %s", e)
         return []
+
+    def get_entry(self, correlation_id: str) -> dict | None:
+        """Get a specific dead-letter entry by correlation_id."""
+        if self._backend == "sqlite" and self._sqlite_conn:
+            try:
+                cursor = self._sqlite_conn.execute(
+                    """SELECT id, correlation_id, failed_stage, retry_count,
+                              error_log, state_snapshot, created_at
+                       FROM dead_letter WHERE correlation_id = ?
+                       ORDER BY created_at DESC LIMIT 1""",
+                    (correlation_id,),
+                )
+                row = cursor.fetchone()
+                if row:
+                    return {
+                        "id": row[0],
+                        "correlation_id": row[1],
+                        "failed_stage": row[2],
+                        "retry_count": row[3],
+                        "error_log": json.loads(row[4]) if row[4] else [],
+                        "state_snapshot": json.loads(row[5]) if row[5] else None,
+                        "created_at": row[6],
+                    }
+            except Exception as e:
+                logger.error("Dead-letter get_entry failed: %s", e)
+        return None
+
+    def replay(self, correlation_id: str, modified_prompt: str | None = None) -> dict:
+        """
+        Replay a dead-lettered workflow.
+
+        Retrieves the original prompt from the dead-letter entry and
+        re-submits it to the pipeline with a new correlation_id.
+
+        Args:
+            correlation_id: The dead-lettered workflow's correlation ID.
+            modified_prompt: Optional modified prompt. If None, uses
+                the original prompt from the state snapshot.
+
+        Returns:
+            Dict with new_correlation_id and replay status.
+        """
+        entry = self.get_entry(correlation_id)
+        if not entry:
+            return {
+                "status": "error",
+                "message": f"Dead-letter entry not found: {correlation_id}",
+            }
+
+        # Extract original prompt from state snapshot
+        snapshot = entry.get("state_snapshot") or {}
+        original_prompt = modified_prompt or snapshot.get("research_prompt", "")
+
+        if not original_prompt:
+            return {
+                "status": "error",
+                "message": "No prompt available in dead-letter entry (state_snapshot missing)",
+            }
+
+        # Create new workflow run
+        from orchestration.correlation import generate_correlation_id
+        from orchestration.state import create_initial_state
+
+        new_corr_id = generate_correlation_id()
+
+        logger.info(
+            "REPLAY: Dead-lettered workflow %s → new run %s",
+            correlation_id[:12], new_corr_id[:12],
+        )
+
+        # Mark the old entry as replayed
+        self._mark_replayed(correlation_id, new_corr_id)
+
+        return {
+            "status": "replayed",
+            "original_correlation_id": correlation_id,
+            "new_correlation_id": new_corr_id,
+            "prompt": original_prompt,
+            "failed_stage": entry.get("failed_stage"),
+            "original_retry_count": entry.get("retry_count", 0),
+        }
+
+    def _mark_replayed(self, old_corr_id: str, new_corr_id: str) -> None:
+        """Mark a dead-letter entry as replayed with the new correlation_id."""
+        if self._backend == "sqlite" and self._sqlite_conn:
+            try:
+                # Add a note to the error_log indicating replay
+                self._sqlite_conn.execute(
+                    """UPDATE dead_letter
+                       SET error_log = json_insert(error_log, '$[#]', ?)
+                       WHERE correlation_id = ?""",
+                    (f"REPLAYED → {new_corr_id}", old_corr_id),
+                )
+                self._sqlite_conn.commit()
+            except Exception as e:
+                logger.warning("Failed to mark as replayed: %s", e)
 
     def _write_to_file_fallback(self, entry: dict):
         """Last-resort: append to a JSON-lines file if all stores fail."""
