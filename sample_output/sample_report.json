@@ -1,0 +1,331 @@
+{
+  "metadata": {
+    "report_id": "rpt-a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "generated_at": "2026-05-07T12:00:00Z",
+    "research_prompt": "Analyze the current market trend for AI-powered developer tools in 2026",
+    "total_sources_consulted": 8,
+    "total_facts_extracted": 34,
+    "overall_confidence": 0.82,
+    "generation_time_seconds": 45.3,
+    "model_versions": {
+      "planning": "gpt-4o",
+      "extraction": "gpt-4o-mini",
+      "writing": "gpt-4o"
+    },
+    "revision_count": 1
+  },
+  "executive_summary": "The AI-powered developer tools market is experiencing explosive growth in 2026, with market size estimates ranging from $15.2 billion (Gartner) to $18.7 billion (IDC), representing 35-42% year-over-year growth. AI code assistants have achieved mainstream adoption with 78% of professional developers using at least one AI tool daily. The market is consolidating around three major players — GitHub Copilot, Cursor, and Amazon CodeWhisperer — while a vibrant ecosystem of specialized tools (testing, documentation, code review) continues to expand. Sources agree that productivity gains average 30-55% for routine coding tasks, but conflict on the impact on code quality, with some studies showing improved consistency while others flag increased technical debt from AI-generated code.",
+  "sections": [
+    {
+      "title": "Market Size & Growth",
+      "summary": "The AI developer tools market has grown significantly beyond initial projections, driven by enterprise adoption and expanding use cases beyond code completion.",
+      "bullet_points": [
+        {
+          "text": "Global market size estimated at $15.2-18.7 billion in 2026, up from $5.1 billion in 2024",
+          "citations": [
+            {
+              "source_id": "src-001",
+              "source_name": "Gartner AI Dev Tools Report 2026",
+              "source_type": "web_api",
+              "url": "https://gartner.com/ai-dev-tools-2026",
+              "snippet": "Market valued at $15.2B with 35% YoY growth"
+            },
+            {
+              "source_id": "src-002",
+              "source_name": "IDC Worldwide AI Software Forecast",
+              "source_type": "web_api",
+              "url": "https://idc.com/ai-software-forecast",
+              "snippet": "AI developer tools reached $18.7B, 42% growth"
+            }
+          ],
+          "confidence": 0.85
+        },
+        {
+          "text": "Enterprise adoption rate reached 67% for organizations with 500+ developers, up from 34% in 2024",
+          "citations": [
+            {
+              "source_id": "src-003",
+              "source_name": "Stack Overflow Developer Survey 2026",
+              "source_type": "web_api",
+              "url": "https://survey.stackoverflow.com/2026",
+              "snippet": "Enterprise adoption of AI coding tools at 67%"
+            }
+          ],
+          "confidence": 0.90
+        },
+        {
+          "text": "CAGR projected at 32.8% through 2030, with testing and documentation tools growing fastest at 45% CAGR",
+          "citations": [
+            {
+              "source_id": "src-004",
+              "source_name": "McKinsey AI in Software Engineering",
+              "source_type": "document",
+              "url": "https://mckinsey.com/ai-software-eng",
+              "snippet": "Overall CAGR of 32.8%, testing tools at 45%"
+            }
+          ],
+          "confidence": 0.78
+        }
+      ],
+      "source_comparisons": [
+        {
+          "topic": "Market size valuation in 2026",
+          "agreement_status": "partial",
+          "explanation": "Gartner ($15.2B) and IDC ($18.7B) agree on strong growth but differ by ~23% on total market size. The discrepancy likely stems from different scope definitions — IDC includes AI-powered testing and DevOps tools, while Gartner focuses on code generation and assistance.",
+          "confidence": 0.80
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "title": "Competitive Landscape",
+      "summary": "The market is dominated by three major platforms with distinct positioning strategies.",
+      "bullet_points": [
+        {
+          "text": "GitHub Copilot leads with ~40% market share and 15M+ active subscribers, leveraging deep IDE integration",
+          "citations": [
+            {
+              "source_id": "src-005",
+              "source_name": "GitHub Universe 2026 Keynote",
+              "source_type": "web_api",
+              "url": "https://github.blog/universe-2026",
+              "snippet": "Copilot surpasses 15 million active subscribers"
+            }
+          ],
+          "confidence": 0.88
+        },
+        {
+          "text": "Cursor has captured ~18% market share, gaining traction with its 'AI-first' IDE approach and agentic coding features",
+          "citations": [
+            {
+              "source_id": "src-006",
+              "source_name": "TechCrunch Cursor Series C Coverage",
+              "source_type": "web_api",
+              "url": "https://techcrunch.com/cursor-series-c",
+              "snippet": "Cursor valued at $10B with 18% market share"
+            }
+          ],
+          "confidence": 0.82
+        },
+        {
+          "text": "Amazon CodeWhisperer holds ~12% market share, primarily through AWS ecosystem bundling",
+          "citations": [
+            {
+              "source_id": "src-002",
+              "source_name": "IDC Worldwide AI Software Forecast",
+              "source_type": "web_api",
+              "url": "https://idc.com/ai-software-forecast",
+              "snippet": "CodeWhisperer at 12% share via AWS integration"
+            }
+          ],
+          "confidence": 0.75
+        }
+      ],
+      "source_comparisons": [
+        {
+          "topic": "GitHub Copilot market dominance",
+          "agreement_status": "agree",
+          "explanation": "All sources consistently rank GitHub Copilot as the market leader with share estimates between 38-42%.",
+          "confidence": 0.92
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "title": "Productivity Impact & ROI",
+      "summary": "Studies show significant productivity gains but debate continues on long-term code quality implications.",
+      "bullet_points": [
+        {
+          "text": "Developers report 30-55% faster completion of routine coding tasks when using AI assistants",
+          "citations": [
+            {
+              "source_id": "src-003",
+              "source_name": "Stack Overflow Developer Survey 2026",
+              "source_type": "web_api",
+              "url": "https://survey.stackoverflow.com/2026",
+              "snippet": "55% faster task completion reported by respondents"
+            },
+            {
+              "source_id": "src-007",
+              "source_name": "Microsoft Research Copilot Study",
+              "source_type": "document",
+              "url": "https://microsoft.com/research/copilot-productivity",
+              "snippet": "30% faster completion in controlled study"
+            }
+          ],
+          "confidence": 0.85
+        },
+        {
+          "text": "Average enterprise ROI of 2.1x within 6 months of deployment, primarily from reduced development time",
+          "citations": [
+            {
+              "source_id": "src-004",
+              "source_name": "McKinsey AI in Software Engineering",
+              "source_type": "document",
+              "url": "https://mckinsey.com/ai-software-eng",
+              "snippet": "Average ROI of 2.1x within first 6 months"
+            }
+          ],
+          "confidence": 0.80
+        }
+      ],
+      "source_comparisons": [
+        {
+          "topic": "Impact on code quality",
+          "agreement_status": "conflict",
+          "explanation": "Microsoft Research found AI-assisted code had 15% fewer bugs in controlled environments, while an academic study from UC Berkeley found that AI-generated code introduced subtle technical debt in 23% of cases. The conflict may reflect differences in study methodology — controlled vs. real-world settings.",
+          "confidence": 0.65
+        }
+      ],
+      "subsections": []
+    },
+    {
+      "title": "Emerging Trends & Future Outlook",
+      "summary": "The market is shifting from code completion toward agentic, autonomous development capabilities.",
+      "bullet_points": [
+        {
+          "text": "Agentic coding (AI that autonomously plans, writes, tests, and debugs) is the dominant trend, with 60% of vendors adding agentic features in 2026",
+          "citations": [
+            {
+              "source_id": "src-001",
+              "source_name": "Gartner AI Dev Tools Report 2026",
+              "source_type": "web_api",
+              "url": "https://gartner.com/ai-dev-tools-2026",
+              "snippet": "60% of vendors now offer agentic coding features"
+            }
+          ],
+          "confidence": 0.88
+        },
+        {
+          "text": "Multi-modal code understanding (combining code, documentation, diagrams, and runtime data) is emerging as a key differentiator",
+          "citations": [
+            {
+              "source_id": "src-008",
+              "source_name": "Forrester Developer Experience Report",
+              "source_type": "web_api",
+              "url": "https://forrester.com/devex-2026",
+              "snippet": "Multi-modal understanding is the next frontier"
+            }
+          ],
+          "confidence": 0.72
+        }
+      ],
+      "source_comparisons": [],
+      "subsections": []
+    }
+  ],
+  "source_agreement_summary": {
+    "total_comparisons": 12,
+    "agreements": 7,
+    "conflicts": 2,
+    "partial_agreements": 2,
+    "unique_claims": 1,
+    "agreement_rate": 0.58
+  },
+  "key_conflicts": [
+    {
+      "topic": "Impact of AI tools on code quality",
+      "agreement_status": "conflict",
+      "supporting_facts": [
+        {
+          "fact_id": "fact-017",
+          "claim": "AI-assisted code showed 15% fewer bugs in controlled testing environments",
+          "category": "Productivity Impact",
+          "confidence": 0.82,
+          "is_quantitative": true,
+          "raw_value": "15%"
+        }
+      ],
+      "conflicting_facts": [
+        {
+          "fact_id": "fact-022",
+          "claim": "AI-generated code introduced subtle technical debt in 23% of production codebases studied",
+          "category": "Productivity Impact",
+          "confidence": 0.70,
+          "is_quantitative": true,
+          "raw_value": "23%"
+        }
+      ],
+      "explanation": "Microsoft Research's controlled study found fewer bugs, while UC Berkeley's longitudinal study of production codebases found increased technical debt. The discrepancy likely reflects the difference between short-term code correctness and long-term maintainability.",
+      "confidence": 0.65
+    }
+  ],
+  "open_questions": [
+    {
+      "question": "What is the long-term impact of AI code generation on developer skill development?",
+      "context": "No longitudinal studies beyond 18 months exist yet. Early indicators from bootcamp programs suggest mixed results.",
+      "suggested_sources": ["ACM Computing Surveys", "IEEE Software", "Developer skill assessments from HackerRank"],
+      "priority": "high"
+    },
+    {
+      "question": "How will open-source AI coding models affect the competitive landscape?",
+      "context": "Meta's Code Llama and Mistral's Codestral are gaining traction but market share data for open-source tools is sparse.",
+      "suggested_sources": ["Hugging Face usage statistics", "GitHub dependency data", "OSS community surveys"],
+      "priority": "medium"
+    },
+    {
+      "question": "What regulatory frameworks will emerge for AI-generated code in safety-critical systems?",
+      "context": "EU AI Act categorization of developer tools is still being debated. No clear guidance exists for AI-generated code in medical, automotive, or financial systems.",
+      "suggested_sources": ["EU AI Act committee proceedings", "FDA software guidance updates", "ISO/IEC JTC 1/SC 42 working papers"],
+      "priority": "medium"
+    }
+  ],
+  "all_citations": [
+    {
+      "source_id": "src-001",
+      "source_name": "Gartner AI Dev Tools Report 2026",
+      "source_type": "web_api",
+      "url": "https://gartner.com/ai-dev-tools-2026",
+      "retrieved_at": "2026-05-07T12:00:00Z"
+    },
+    {
+      "source_id": "src-002",
+      "source_name": "IDC Worldwide AI Software Forecast",
+      "source_type": "web_api",
+      "url": "https://idc.com/ai-software-forecast",
+      "retrieved_at": "2026-05-07T12:00:00Z"
+    },
+    {
+      "source_id": "src-003",
+      "source_name": "Stack Overflow Developer Survey 2026",
+      "source_type": "web_api",
+      "url": "https://survey.stackoverflow.com/2026",
+      "retrieved_at": "2026-05-07T12:00:00Z"
+    },
+    {
+      "source_id": "src-004",
+      "source_name": "McKinsey AI in Software Engineering",
+      "source_type": "document",
+      "url": "https://mckinsey.com/ai-software-eng",
+      "retrieved_at": "2026-05-07T12:00:00Z"
+    },
+    {
+      "source_id": "src-005",
+      "source_name": "GitHub Universe 2026 Keynote",
+      "source_type": "web_api",
+      "url": "https://github.blog/universe-2026",
+      "retrieved_at": "2026-05-07T12:00:00Z"
+    },
+    {
+      "source_id": "src-006",
+      "source_name": "TechCrunch Cursor Series C Coverage",
+      "source_type": "web_api",
+      "url": "https://techcrunch.com/cursor-series-c",
+      "retrieved_at": "2026-05-07T12:00:00Z"
+    },
+    {
+      "source_id": "src-007",
+      "source_name": "Microsoft Research Copilot Study",
+      "source_type": "document",
+      "url": "https://microsoft.com/research/copilot-productivity",
+      "retrieved_at": "2026-05-07T12:00:00Z"
+    },
+    {
+      "source_id": "src-008",
+      "source_name": "Forrester Developer Experience Report",
+      "source_type": "web_api",
+      "url": "https://forrester.com/devex-2026",
+      "retrieved_at": "2026-05-07T12:00:00Z"
+    }
+  ]
+}
