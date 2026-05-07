@@ -95,18 +95,32 @@ class ResearchState(TypedDict):
     revision_count: Annotated[int, replace_value]      # Writer revision loops
     workflow_status: Annotated[str, replace_value]     # running | completed | failed
 
+    # ── Cross-Step State Management ────────────────────────────────
+    correlation_id: Annotated[str, replace_value]      # Unique workflow run ID
+    status_transitions: Annotated[list[dict], merge_lists]  # Audit trail of stage transitions
+    retry_backoff_seconds: Annotated[float, replace_value]  # Current backoff delay for retries
 
-def create_initial_state(research_prompt: str) -> dict:
+
+def create_initial_state(
+    research_prompt: str,
+    correlation_id: str | None = None,
+) -> dict:
     """
     Create a fresh initial state for a new research workflow run.
 
     Args:
         research_prompt: The user's research question or topic.
+        correlation_id: Optional pre-generated correlation ID.
+            If not provided, one will be generated automatically.
 
     Returns:
         Dictionary matching the ResearchState schema, ready to be
         passed into the LangGraph StateGraph.
     """
+    from orchestration.correlation import generate_correlation_id
+
+    corr_id = correlation_id or generate_correlation_id()
+
     return {
         "research_prompt": research_prompt,
         "messages": [],
@@ -122,4 +136,7 @@ def create_initial_state(research_prompt: str) -> dict:
         "retry_count": 0,
         "revision_count": 0,
         "workflow_status": "running",
+        "correlation_id": corr_id,
+        "status_transitions": [],
+        "retry_backoff_seconds": 1.0,
     }

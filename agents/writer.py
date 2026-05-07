@@ -18,7 +18,9 @@ import uuid
 import time
 import logging
 from datetime import datetime
+# pyrefly: ignore [missing-import]
 from langchain_openai import ChatOpenAI
+# pyrefly: ignore [missing-import]
 from langchain_core.messages import HumanMessage, SystemMessage
 from config import config
 from models.source import Citation, ComparisonResult, SourceAgreement
