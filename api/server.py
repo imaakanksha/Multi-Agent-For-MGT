@@ -28,6 +28,7 @@ import threading
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from orchestration.state import create_initial_state
@@ -35,6 +36,8 @@ from orchestration.graph import build_research_graph
 from orchestration.correlation import generate_correlation_id, WorkflowTracker
 from persistence.state_store import get_state_store
 from persistence.dead_letter import get_dead_letter_queue
+from guardrails import validate_prompt
+from monitoring.dashboard import DASHBOARD_HTML, get_dashboard_metrics
 
 logger = logging.getLogger(__name__)
 
@@ -156,13 +159,28 @@ async def submit_research(request: ResearchRequest, background_tasks: Background
     """
     Submit a new research workflow (asynchronous).
 
-    Returns a correlation_id immediately. The workflow runs in the
-    background. Poll GET /research/{correlation_id} for status.
+    Applies input guardrails (prompt injection defense, schema validation)
+    before accepting the workflow. Returns a correlation_id immediately.
+    Poll GET /research/{correlation_id} for status.
     """
+    # ── Guardrails: Validate input ─────────────────────────────────
+    guardrail_result = validate_prompt(request.prompt)
+    if not guardrail_result.is_valid:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "message": "Prompt rejected by guardrails",
+                "violations": guardrail_result.violations,
+                "risk_score": guardrail_result.risk_score,
+            },
+        )
+
     correlation_id = generate_correlation_id()
 
-    # Launch workflow in background
-    background_tasks.add_task(_run_workflow_async, correlation_id, request.prompt)
+    # Launch workflow with sanitized prompt
+    background_tasks.add_task(
+        _run_workflow_async, correlation_id, guardrail_result.sanitized_prompt,
+    )
 
     return ResearchSubmitResponse(
         correlation_id=correlation_id,
@@ -289,4 +307,66 @@ async def health_check():
         "status": "healthy",
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": "1.0.0",
+    }
+
+
+# ── Monitoring Dashboard ───────────────────────────────────────────
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def monitoring_dashboard():
+    """Serve the monitoring dashboard (HTML page with live metrics)."""
+    return HTMLResponse(content=DASHBOARD_HTML, status_code=200)
+
+
+@app.get("/dashboard/metrics")
+async def dashboard_metrics():
+    """JSON metrics feed for the dashboard."""
+    return get_dashboard_metrics()
+
+
+# ── Dead-Letter Replay ─────────────────────────────────────────────
+
+@app.post("/dead-letter/{correlation_id}/replay")
+async def replay_dead_letter(
+    correlation_id: str,
+    background_tasks: BackgroundTasks,
+    modified_prompt: str | None = None,
+):
+    """
+    Replay a dead-lettered workflow.
+
+    Re-submits the failed workflow with a new correlation_id.
+    Optionally accepts a modified prompt to fix the original issue.
+    """
+    dlq = get_dead_letter_queue()
+    result = dlq.replay(correlation_id, modified_prompt=modified_prompt)
+
+    if result["status"] == "error":
+        raise HTTPException(status_code=404, detail=result["message"])
+
+    # Launch the replayed workflow in background
+    background_tasks.add_task(
+        _run_workflow_async,
+        result["new_correlation_id"],
+        result["prompt"],
+    )
+
+    return result
+
+
+# ── Guardrail Validation (standalone) ──────────────────────────────
+
+@app.post("/validate")
+async def validate_research_prompt(request: ResearchRequest):
+    """
+    Validate a prompt against guardrails without submitting a workflow.
+
+    Useful for pre-flight checks in client applications.
+    """
+    result = validate_prompt(request.prompt)
+    return {
+        "is_valid": result.is_valid,
+        "sanitized_prompt": result.sanitized_prompt,
+        "violations": result.violations,
+        "risk_score": result.risk_score,
     }

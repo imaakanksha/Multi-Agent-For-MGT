@@ -38,10 +38,10 @@ logger = logging.getLogger(__name__)
 _INJECTION_PATTERNS = [
     # Direct instruction override attempts
     r"(?i)ignore\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompts?|rules?)",
-    r"(?i)disregard\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompts?)",
+    r"(?i)disregard\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompts?|rules?)",
     r"(?i)forget\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompts?)",
     # System prompt extraction
-    r"(?i)(show|reveal|print|output|repeat|display)\s+(your|the)\s+(system\s+)?(prompt|instructions?|rules?)",
+    r"(?i)(show|reveal|print|output|repeat|display)\s+.{0,20}(system\s+)?(prompt|instructions?|rules?)",
     r"(?i)what\s+(are|is)\s+your\s+(system\s+)?(prompt|instructions?)",
     # Role-play attacks
     r"(?i)you\s+are\s+now\s+(DAN|a\s+hacker|an?\s+unrestricted|evil)",
@@ -116,7 +116,7 @@ def validate_prompt(prompt: str) -> InputGuardrailResult:
     for i, pattern in enumerate(_COMPILED_PATTERNS):
         if pattern.search(sanitized):
             injection_hits.append(_INJECTION_PATTERNS[i])
-            risk_score += 0.3
+            risk_score += 0.5  # Each injection pattern is high-severity
 
     if injection_hits:
         violations.append(
