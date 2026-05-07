@@ -8,16 +8,22 @@ langchain-community>=0.3.0
 # LLM Providers
 openai>=1.50.0
 
-# Web search tools
+# Web search tools (optional — mock fallback available)
 tavily-python>=0.5.0
 
 # Data models & validation
 pydantic>=2.9.0
 
-# Azure persistence
+# API server
+fastapi>=0.115.0
+uvicorn>=0.32.0
+
+# Azure persistence (optional — SQLite fallback available)
 azure-cosmos>=4.8.0
 azure-search-documents>=11.6.0
 azure-identity>=1.18.0
+azure-data-tables>=12.5.0
+azure-storage-queue>=12.10.0
 
 # Document processing
 pypdf>=5.0.0
@@ -30,7 +36,7 @@ tiktoken>=0.8.0
 # Environment & config
 python-dotenv>=1.0.0
 
-# Observability
+# Observability (optional)
 langsmith>=0.2.0
 
 # Testing

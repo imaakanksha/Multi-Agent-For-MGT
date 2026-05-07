@@ -12,11 +12,43 @@ load_dotenv()
 
 @dataclass
 class LLMConfig:
-    """Configuration for LLM providers with model-tier strategy."""
+    """Configuration for LLM providers with model-tier strategy.
+
+    Supports three provider modes:
+      1. OpenAI API directly (default)
+      2. Azure OpenAI (set OPENAI_API_BASE to your Azure endpoint)
+      3. Ollama / LM Studio local (set OPENAI_API_BASE=http://localhost:11434/v1)
+
+    When using Ollama, set model names to your local model (e.g. 'llama3.1', 'mistral').
+    """
     api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
+    api_base: str = field(default_factory=lambda: os.getenv("OPENAI_API_BASE", ""))
     model_planning: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL_PLANNING", "gpt-4o"))
     model_extraction: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL_EXTRACTION", "gpt-4o-mini"))
     model_writing: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL_WRITING", "gpt-4o"))
+
+    @property
+    def provider(self) -> str:
+        """Detect which LLM provider is configured."""
+        if not self.api_base:
+            return "openai"
+        if "localhost" in self.api_base or "127.0.0.1" in self.api_base:
+            return "ollama"  # or LM Studio
+        if "azure" in self.api_base or "openai.azure.com" in self.api_base:
+            return "azure_openai"
+        return "custom"
+
+    @property
+    def is_local(self) -> bool:
+        """True when using a local/free LLM provider."""
+        return self.provider in ("ollama", "custom")
+
+    def get_llm_kwargs(self) -> dict:
+        """Build kwargs dict for ChatOpenAI constructor."""
+        kwargs = {"api_key": self.api_key or "ollama"}
+        if self.api_base:
+            kwargs["base_url"] = self.api_base
+        return kwargs
 
 
 @dataclass
